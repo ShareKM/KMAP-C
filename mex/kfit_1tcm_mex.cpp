@@ -26,8 +26,6 @@
 // - p: Estimated parameters.
 // - c: Fitted curve.
 //
-// Compilation Instruction:
-// mex kfit_1tcm_mex.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp -output kfit_1tcm
 //
 // This will produce a MEX file named 'kfit_1tcm', which you can call from MATLAB 
 // as kfit_1tcm(...) with the same arguments as described above.

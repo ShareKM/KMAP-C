@@ -8,8 +8,6 @@
 // Usage: 
 // kfit_2tcm(tac, w, scant, blood, wblood, dk, pinit, plb, pub, psens, maxit, td)
 //
-// Compilation Instruction:
-// mex kfit_2tcm_mex.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp -output kfit_2tcm
 //
 // This will produce a MEX file named 'kfit_2tcm', which you can call from MATLAB 
 // as kfit_2tcm(...) with the same arguments as described above.

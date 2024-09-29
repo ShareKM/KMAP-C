@@ -8,8 +8,6 @@
 // Usage:
 // ktac_1tcm(par, scant, blood, wblood, dk, td)
 //
-// Compilation Instruction:
-// mex ktac_1tcm_mex.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp -output ktac_1tcm
 //
 // This will produce a MEX file named 'ktac_1tcm', which you can call from MATLAB 
 // as ktac_1tcm(...) with the same arguments as described above.

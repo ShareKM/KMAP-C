@@ -10,9 +10,6 @@
 // Usage: 
 // kfit_srtm_mex_omp(tac, w, scant, blood, wblood, dk, pinit, lb, ub, psens, maxit, td)
 //
-// Compilation Instruction:
-// mex kfit_srtm_mex_omp.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp 
-// CXXFLAGS="\$CXXFLAGS -fopenmp" LDFLAGS="\$LDFLAGS -fopenmp"
 //
 // This will produce a MEX file named 'kfit_srtm_mex_omp', which you can call from MATLAB 
 // as kfit_srtm_mex_omp(...) with the same arguments as described above.

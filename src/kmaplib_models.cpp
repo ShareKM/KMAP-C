@@ -1,7 +1,8 @@
 /*
  * kmaplib_models.cpp
  * 
- * This file contains all the kinetic modeling functions used to calculate time activity curves (TAC) and sensitivity functions for different kinetic models.
+ * This file contains all the kinetic modeling functions used to calculate time 
+ * activity curves (TAC) and sensitivity functions for different kinetic models.
  */
 
 #include "kmaplib.h"
@@ -69,16 +70,17 @@ void kconv_2tcm_tac(double *p, double dk, double *scant, double td, double *cp,
       a1 = (k234 - d) / 2;
       a2 = (k234 + d) / 2;
 
-      // get delayed cp/wb
+      // get delayed cp and wb
       time_delay_tac(wb, num_time, t_delay, td, wb_delay);
       time_delay_tac(cp, num_time, t_delay, td, cp_delay);
+
       // Convolution with exponential functions
       tmp = a1 + dk;
       kconv_exp(1.0, tmp, cp_delay, num_time, td, c_a1);
       tmp = a2 + dk;
       kconv_exp(1.0, tmp, cp_delay, num_time, td, c_a2);
 
-      // Compute tissue concentration
+      // Compute compartmental TACs
       if (d==0) d = 1e9;
       f1 = k1/d * (k4 - a1);
       f2 = k1/d * (a2 - k4);
@@ -167,6 +169,7 @@ void kconv_2tcm_jac(double *p, double dk, double *scant, double td, double *cp,
       kconv_exp(1.0, tmp, cp, num_time, td, c_a1_0);
       tmp = a2 + dk;
       kconv_exp(1.0, tmp, cp, num_time, td, c_a2_0);
+      
       // c_a1, c_a2, wb with time delay
       time_delay_tac(c_a1_0, num_time, t_delay, td, c_a1);
       time_delay_tac(c_a2_0, num_time, t_delay, td, c_a2);

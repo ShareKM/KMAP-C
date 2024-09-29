@@ -1,7 +1,8 @@
 /*
  * kmaplib_infun.cpp
  * 
- * This file contains the functions that are used for processing the input function.
+ * This file contains the functions that are used for processing the input function, 
+ * such as the time dealy
  */
 
 #include "kmaplib.h"
@@ -12,7 +13,8 @@
 // time_delay_tac
 //------------------------------------------------------------------------------
 // compute time-delayed TAC curve
-void time_delay_tac(double* tac, int tac_size, double delay_time, double td, double *out) {
+void time_delay_tac(double* tac, int tac_size, double delay_time, double td, double *out) 
+{
 /* 
    tac: time activity curve
    tac_size: number of frames
@@ -20,7 +22,8 @@ void time_delay_tac(double* tac, int tac_size, double delay_time, double td, dou
    td: time step size
    out: output tac
 
-   Created by Yiran Wang, modified by Yansong Zhu @ UC Davis
+   Created by Yiran Wang, 2023;
+   Modified by Yansong Zhu @ UC Davis, 2024
 */
    double shiftAmount = delay_time/td;
    double fraction = shiftAmount - floor(shiftAmount);
@@ -69,7 +72,8 @@ void time_delay_tac(double* tac, int tac_size, double delay_time, double td, dou
 // time_delay_jac
 //------------------------------------------------------------------------------
 // compute gradient for time delay correction
-void time_delay_jac(double *tac, int tac_size, double delay_time, double td, double *out){
+void time_delay_jac(double *tac, int tac_size, double delay_time, double td, double *out)
+{
 /*
    tac: time activity curve
    tac_size: number of frames
@@ -79,14 +83,14 @@ void time_delay_jac(double *tac, int tac_size, double delay_time, double td, dou
 
    Created by Yiran Wang in 2023, modified by Yansong Zhu in 2024 @ UC Davis
 */
-int n = floor(delay_time/td);
-for(int m=0; m<tac_size; m++){
-   int i = m - (n + 1);
-   if ((i >= 0) && (i <= (tac_size - 2))){
-      out[m] = (tac[i + 1] - tac[i]) / td;
-   } 
-   else{
-      out[m] = 0.0;    
-   }
-}
+	int n = floor(delay_time/td);
+	for(int m=0; m<tac_size; m++){
+	   int i = m - (n + 1);
+	   if ((i >= 0) && (i <= (tac_size - 2))){
+	      out[m] = (tac[i + 1] - tac[i]) / td;
+	   } 
+	   else{
+	      out[m] = 0.0;    
+	   }
+	}
 }

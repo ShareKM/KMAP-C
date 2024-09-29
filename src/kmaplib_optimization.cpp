@@ -1,11 +1,12 @@
 /*
- * kinlib_optimization.cpp
+ * kmaplib_optimization.cpp
  * 
- * This file contains the optimization functions used for parameter estimation in kinetic modeling. 
- * The Levenberg-Marquardt algorithm and associated helper functions are implemented here.
+ * This file contains the optimization functions used for parameter estimation in 
+ * kinetic modeling. The Levenberg-Marquardt algorithm and associated helper 
+ * functions are implemented here.
  */
 
-#include "kinlib.h"
+#include "kmaplib.h"
 #include "mex.h"
 #include <cmath>
 #include <cstdlib>
@@ -201,56 +202,6 @@ void boundpls_cd(double *y, double *w, double *a, double alpha, int num_y,
          for (i = 0; i < num_y; i++)
             r[i] -= a[i + j * num_y] * dj;
       }
-   }
-}
-
-//------------------------------------------------------------------------------
-// BoundQuadCD
-//------------------------------------------------------------------------------
-// Coordinate descent algorithm for solving quadratic minimization problems
-// subject to box bounds. Solves x = argmin g'(x-xn) + 1/2 (x-xn)' H (x-xn).
-void BoundQuadCD(double *g, double *H, double *x, int num_par, double mu, 
-                 int maxit, double *xmin, double *xmax)
-{
-   int      i, j, it, found = 0;
-   double   xn2, err, dj, xj;
-   double   hes, tmp;
-   double   etol = 1.0e-9;
-
-   it = 0; 
-   while ((found == 0) && (it < maxit)) {
-      xn2 = vecnorm2(x, num_par);
-      err = 0.0;
-      for (j = 0; j < num_par; j++) {
-         tmp = mu;
-         hes = H[j + j * num_par] + tmp;
-         if (fabs(hes) > 0.0)
-            dj = g[j] / hes;
-         else
-            dj = 0.0;
-         xj = x[j] - dj;
-
-         // Apply bounds to the estimate
-         if (xj < xmin[j])
-            xj = xmin[j];
-         else if (xj > xmax[j])
-            xj = xmax[j];
-         dj = xj - x[j];
-         x[j] = xj;
-
-         // Update gradient
-         for (i = 0; i < num_par; i++)
-            g[i] += H[i + j * num_par] * dj;
-         g[j] += tmp * dj;
-
-         // Update the error
-         err += dj * dj;
-      }
-      ++it;
-
-      // Check for convergence
-      if (sqrt(err) <= etol * (xn2 + etol))
-         found = 1;
    }
 }
 
