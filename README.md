@@ -12,9 +12,6 @@ The **C-KMAP Toolkit** is a core C/C++ source code library to define and impleme
 
 The toolkit also includes wapper functions designed to integrate the kinetic modeling implementations for other programming languages such as MATLAB.
 
-This package includes 
-- `KMAP-C`:
-- 
 ## Licensing
 
 This repository is licensed under [MIT License](KMAP-C/LICENSE).
