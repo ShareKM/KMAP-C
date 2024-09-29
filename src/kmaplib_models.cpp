@@ -1,10 +1,10 @@
 /*
- * kinlib_models.cpp
+ * kmaplib_models.cpp
  * 
  * This file contains all the kinetic modeling functions used to calculate time activity curves (TAC) and sensitivity functions for different kinetic models.
  */
 
-#include "kinlib.h"
+#include "kmaplib.h"
 #include "mex.h"
 
 //------------------------------------------------------------------------------
