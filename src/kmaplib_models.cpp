@@ -595,11 +595,15 @@ void kconv_1tcm_jac(double *p, double dk, double *scant, double td, double *cp,
 // kconv_liver_tac
 //------------------------------------------------------------------------------
 // Calculates the time activity curve using the two-tissue kinetic model with 
-// a dual-blood input function model for the liver.
-/* References:
-   Wang GB, Corwin MT, Olson KA, Badawi RD, Sarkar S. Dynamic PET of human liver 
-   inflammation: impact of kinetic modeling with optimization-derived dual-blood 
-   input function. Physics in Medicine and Biology, 63(15): 155004 (14pp),  2018.
+// a dual-blood input function model for the liver. 
+/* More details of the model are referred to the references:
+   [1] Wang GB, Corwin MT, Olson KA, Badawi RD, Sarkar S. Dynamic PET of human 
+   liver inflammation: impact of kinetic modeling with optimization-derived dual- 
+    blood input function. Physics in Medicine and Biology, 63(15): 155004 (14pp),
+    2018.
+   [2] Zuo Y, Sarkar S, Corwin MT, Olson K, Badawi RD, Wang GB. Structural and 
+   practical identifiability of dual-input kinetic modeling in dynamic PET of liver 
+   inflammation. Physics in Medicine and Biology,  64(17): 175023 (18pp),  2019.
 */
 void kconv_liver_tac(double *p, double dk, double *scant, double td, double *ca, 
                     double *wb, int num_frm, int num_vox, double *ct)
@@ -688,8 +692,8 @@ void kconv_liver_tac(double *p, double dk, double *scant, double td, double *ca,
 //------------------------------------------------------------------------------
 // kconv_liver_jac
 //------------------------------------------------------------------------------
-// Calculates the time activity curves and sensitivity functions for the 
-// two-tissue compartment model specific to liver kinetic modeling.
+// Calculates the time activity curves and sensitivity functions using the
+// two-tissue compartment model with a dual-blood input function for the liver.
 void kconv_liver_jac(double *p, double dk, double *scant, double td, double *ca, 
                     double *wb, int num_frm, int num_vox, double *ct, int *psens, 
                     double *st)
