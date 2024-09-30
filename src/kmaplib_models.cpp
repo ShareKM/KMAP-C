@@ -594,8 +594,13 @@ void kconv_1tcm_jac(double *p, double dk, double *scant, double td, double *cp,
 //------------------------------------------------------------------------------
 // kconv_liver_tac
 //------------------------------------------------------------------------------
-// Calculates the time activity curve using a two-tissue kinetic model with 
-// liver-specific parameters.
+// Calculates the time activity curve using the two-tissue kinetic model with 
+// a dual-blood input function model for the liver.
+/* References:
+   Wang GB, Corwin MT, Olson KA, Badawi RD, Sarkar S. Dynamic PET of human liver 
+   inflammation: impact of kinetic modeling with optimization-derived dual-blood 
+   input function. Physics in Medicine and Biology, 63(15): 155004 (14pp),  2018.
+*/
 void kconv_liver_tac(double *p, double dk, double *scant, double td, double *ca, 
                     double *wb, int num_frm, int num_vox, double *ct)
 {
