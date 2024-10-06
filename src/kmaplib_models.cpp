@@ -228,8 +228,8 @@ void kconv_2tcm_jac(double *p, double dk, double *scant, double td, double *cp,
          s_t += num_time;
       }
       if (psens[5] == 1) { // wrt time delay
-         time_delay_jac(cp_delay, num_time, t_delay, td, cp_grad_delay);
-         time_delay_jac(wb_delay, num_time, t_delay, td, wb_grad_delay);
+         time_delay_jac(cp_delay, num_time, td, cp_grad_delay);
+         time_delay_jac(wb_delay, num_time, td, wb_grad_delay);
          tmp = a1 + dk;
          kconv_exp(1.0, tmp, cp_grad_delay, num_time, td, c_a1);
          tmp = a2 + dk;
@@ -413,8 +413,8 @@ void kconv_srtm_jac(double *p, double dk, double *scant, double td, double *cr0,
          s_t += num_time;
       }
       if (psens[3] == 1) { // wrt time delay
-         time_delay_jac(cr0_delay, num_time, t_delay, td, cr0_grad_delay);
-         time_delay_jac(wb_delay, num_time, t_delay, td, wb_grad_delay);
+         time_delay_jac(cr0_delay, num_time, td, cr0_grad_delay);
+         time_delay_jac(wb_delay, num_time, td, wb_grad_delay);
          kconv_exp(1.0, k2a + dk, cr0_grad_delay, num_time, td, c_a);
 
 	      for (i=0; i<num_time; i++){ 
@@ -568,8 +568,8 @@ void kconv_1tcm_jac(double *p, double dk, double *scant, double td, double *cp,
          s_t += num_time;
       }
       if (psens[3] == 1) { // wrt time delay
-         time_delay_jac(cp_delay, num_time, t_delay, td, cp_grad_delay);
-         time_delay_jac(wb_delay, num_time, t_delay, td, wb_grad_delay);
+         time_delay_jac(cp_delay, num_time, td, cp_grad_delay);
+         time_delay_jac(wb_delay, num_time, td, wb_grad_delay);
          a = k2 + dk;
          kconv_exp(k1, a, cp_grad_delay, num_time, td, c_a);
 	      for (i=0; i<num_time; i++){ 
@@ -858,7 +858,7 @@ void kconv_liver_jac(double *p, double dk, double *scant, double td, double *ca,
          s_t += num_time;
       }
       if (psens[7] == 1) { // wrt time delay
-         time_delay_jac(ca_delay, num_time, t_delay, td, ca_grad_delay);
+         time_delay_jac(ca_delay, num_time, td, ca_grad_delay);
          tmp = ka + dk;
          kconv_exp(ka, tmp, ca_grad_delay, num_time, td, c_pv);
          for (i = 0; i < num_time; i++) {

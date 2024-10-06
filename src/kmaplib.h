@@ -208,5 +208,5 @@ void time_delay_tac(double* input, int size, double delay_time, double td, doubl
  * time_delay_jac
  * compute gradient for time delay estimation
  */
-void time_delay_jac(double *tac, int tac_size, double delay_time, double td, double *out);
+void time_delay_jac(double *tac, int tac_size, double td, double *out);
 

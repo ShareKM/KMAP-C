@@ -72,12 +72,11 @@ void time_delay_tac(double* tac, int tac_size, double delay_time, double td, dou
 // time_delay_jac
 //------------------------------------------------------------------------------
 // compute gradient for time delay correction
-void time_delay_jac(double *tac, int tac_size, double delay_time, double td, double *out)
+void time_delay_jac(double *tac, int tac_size, double td, double *out)
 {
 /*
    tac: time activity curve
    tac_size: number of frames
-   delay_time: time delay (in seconds)
    td: time step size
    out: output gradient vector
 
@@ -88,26 +87,3 @@ void time_delay_jac(double *tac, int tac_size, double delay_time, double td, dou
 	}
    out[tac_size-1] = 0.0;
 }
-/*
-void time_delay_jac(double *tac, int tac_size, double delay_time, double td, double *out)
-{
-/*
-   tac: time activity curve
-   tac_size: number of frames
-   delay_time: time delay (in seconds)
-   td: time step size
-   out: output gradient vector
-
-   Created by Yiran Wang in 2023, modified by Yansong Zhu in 2024 @ UC Davis
-
-	int n = floor(delay_time/td);
-	for(int m=0; m<tac_size; m++){
-	   int i = m - (n + 1);
-	   if ((i >= 0) && (i <= (tac_size - 2))){
-	      out[m] = (tac[i + 1] - tac[i]) / td;
-	   } 
-	   else{
-	      out[m] = 0.0;    
-	   }
-	}
-}*/
