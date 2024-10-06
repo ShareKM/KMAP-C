@@ -1,5 +1,5 @@
 #include "mex.h"
-#include "kinlib.h"
+#include "kmaplib.h"
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file implements the computation of the time activity curve (TAC) and its

@@ -1,5 +1,5 @@
 #include "mex.h"
-#include "kinlib.h"
+#include "kmaplib.h"
 #include <omp.h>
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

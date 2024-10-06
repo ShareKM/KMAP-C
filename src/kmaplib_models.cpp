@@ -120,8 +120,8 @@ void kconv_2tcm_jac(double *p, double dk, double *scant, double td, double *cp,
    double   vb, k1, k2, k3, k4, t_delay;
    double   d, a1, a2, f1, f2, b1, b2, k234, tmp;
    double  *c_a1, *c_a2, *c_f, *c_b, *c_t, *s_t;
-   double  *c_a1_0, *c_a2_0, *c_f_0, *c_b_0, *c_t_0, *wb_delay;       
-   double  *grad_t_delay;                          
+   double  *wb_delay, *cp_delay;       
+   double  *cp_grad_delay, *wb_grad_delay;                          
    int      num_time;
    int      num_par;
   
@@ -138,15 +138,12 @@ void kconv_2tcm_jac(double *p, double dk, double *scant, double td, double *cp,
    c_a2 = (double*) malloc(sizeof(double) * num_time);
    c_f  = (double*) malloc(sizeof(double) * num_time);
    c_b  = (double*) malloc(sizeof(double) * num_time);
-   c_a1_0 = (double*) malloc(sizeof(double)*num_time);
-   c_a2_0 = (double*) malloc(sizeof(double)*num_time);
-   c_f_0  = (double*) malloc(sizeof(double)*num_time);
-   c_b_0  = (double*) malloc(sizeof(double)*num_time);
-   c_t_0  = (double*) malloc(sizeof(double)*num_time);
    wb_delay  = (double*) malloc(sizeof(double)*num_time);
+   cp_delay  = (double*) malloc(sizeof(double)*num_time);
    c_t  = (double*) malloc(sizeof(double) * num_time);
    s_t  = (double*) malloc(sizeof(double) * num_time * num_par);
-	grad_t_delay  = (double*) malloc(sizeof(double)*num_time);
+   cp_grad_delay  = (double*) malloc(sizeof(double)*num_time);
+   wb_grad_delay  = (double*) malloc(sizeof(double)*num_time);
 
    // Iterate over each voxel
    for (j = 0; j < num_vox; j++) {
@@ -163,17 +160,16 @@ void kconv_2tcm_jac(double *p, double dk, double *scant, double td, double *cp,
       d = sqrt(k234 * k234 - 4 * k2 * k4);
       a1 = (k234 - d) / 2;
       a2 = (k234 + d) / 2;
-	
+      
+      // cp, wb with time delay
+      time_delay_tac(wb, num_time, t_delay, td, wb_delay);
+      time_delay_tac(cp, num_time, t_delay, td, cp_delay);
+
       // exp components without time delay
       tmp = a1 + dk;
-      kconv_exp(1.0, tmp, cp, num_time, td, c_a1_0);
+      kconv_exp(1.0, tmp, cp_delay, num_time, td, c_a1);
       tmp = a2 + dk;
-      kconv_exp(1.0, tmp, cp, num_time, td, c_a2_0);
-      
-      // c_a1, c_a2, wb with time delay
-      time_delay_tac(c_a1_0, num_time, t_delay, td, c_a1);
-      time_delay_tac(c_a2_0, num_time, t_delay, td, c_a2);
-      time_delay_tac(wb, num_time, t_delay, td, wb_delay);
+      kconv_exp(1.0, tmp, cp_delay, num_time, td, c_a2);
 
       // Calculate concentrations
       if (d == 0) d = 1e9;
@@ -182,9 +178,6 @@ void kconv_2tcm_jac(double *p, double dk, double *scant, double td, double *cp,
       b1 = k1 / d * k3;
       b2 = -b1;	
       for (i = 0; i < num_time; i++) {
-         c_f_0[i] = f1*c_a1_0[i] + f2*c_a2_0[i];
-         c_b_0[i] = b1*c_a1_0[i] + b2*c_a2_0[i];
-         c_t_0[i] = (1-vb) * (c_f_0[i] + c_b_0[i]) + vb*wb[i];
          c_f[i] = f1 * c_a1[i] + f2 * c_a2[i];
          c_b[i] = b1 * c_a1[i] + b2 * c_a2[i];
          c_t[i] = (1 - vb) * (c_f[i] + c_b[i]) + vb * wb_delay[i];
@@ -235,9 +228,21 @@ void kconv_2tcm_jac(double *p, double dk, double *scant, double td, double *cp,
          s_t += num_time;
       }
       if (psens[5] == 1) { // wrt time delay
-         time_delay_jac(c_t_0, num_time, t_delay, td, grad_t_delay);
+         time_delay_jac(cp_delay, num_time, t_delay, td, cp_grad_delay);
+         time_delay_jac(wb_delay, num_time, t_delay, td, wb_grad_delay);
+         tmp = a1 + dk;
+         kconv_exp(1.0, tmp, cp_grad_delay, num_time, td, c_a1);
+         tmp = a2 + dk;
+         kconv_exp(1.0, tmp, cp_grad_delay, num_time, td, c_a2);
+         f1 = k1 / d * (k4 - a1);
+         f2 = k1 / d * (a2 - k4);
+         b1 = k1 / d * k3;
+         b2 = -b1;	
 	      for (i=0; i<num_time; i++){ 
-            s_t[i] = - grad_t_delay[i];
+            c_f[i] = f1 * c_a1[i] + f2 * c_a2[i];
+            c_b[i] = b1 * c_a1[i] + b2 * c_a2[i];
+            s_t[i] = (1 - vb) * (c_f[i] + c_b[i]) + vb *wb_grad_delay[i];
+            s_t[i] = - s_t[i];
          } 
 	      s_t += num_time;
       }
@@ -254,13 +259,10 @@ void kconv_2tcm_jac(double *p, double dk, double *scant, double td, double *cp,
    free(c_a2);
    free(c_f);
    free(c_b);
-   free(c_a1_0);
-   free(c_a2_0);
-   free(c_f_0);
-   free(c_b_0);
+   free(cp_delay);
    free(wb_delay);
-   free(c_t_0);
-   free(grad_t_delay);
+   free(cp_grad_delay);
+   free(wb_grad_delay);
    free(c_t);
    free(s_t);
 }
@@ -331,8 +333,8 @@ void kconv_srtm_jac(double *p, double dk, double *scant, double td, double *cr0,
    double   vb, R1, k2, BP, t_delay;
    double   k2a;
    double   *c_a, *c_b, *c_t, *s_t;
-   double   *c_a_0, *c_b_0, *c_t_0, *wb_delay, *cr0_delay;
-   double   *grad_t_delay;
+   double   *wb_delay, *cr0_delay;
+   double   *cr0_grad_delay, *wb_grad_delay;
    int      num_time;
    int      num_par;
 
@@ -347,16 +349,14 @@ void kconv_srtm_jac(double *p, double dk, double *scant, double td, double *cr0,
    num_time = (int) (scant[2*num_frm-1] / td);
    c_a = (double*) malloc(sizeof(double) * num_time);
    c_b = (double*) malloc(sizeof(double) * num_time);
-   c_a_0 = (double*) malloc(sizeof(double) * num_time);
-   c_b_0 = (double*) malloc(sizeof(double) * num_time);
-   c_t_0 = (double*) malloc(sizeof(double) * num_time);
    wb_delay = (double*) malloc(sizeof(double) * num_time);
    cr0_delay = (double*) malloc(sizeof(double) * num_time);
 
    c_t = (double*) malloc(sizeof(double) * num_time);
    s_t = (double*) malloc(sizeof(double) * num_time * num_par);
 
-   grad_t_delay  = (double*) malloc(sizeof(double)*num_time);
+   cr0_grad_delay  = (double*) malloc(sizeof(double)*num_time);
+   wb_grad_delay  = (double*) malloc(sizeof(double)*num_time);
 
    // Iterate over each voxel
    for (j = 0; j < num_vox; j++) {
@@ -371,19 +371,15 @@ void kconv_srtm_jac(double *p, double dk, double *scant, double td, double *cr0,
       // Compute k2a
       k2a = k2 / (1.0 + BP);
       
-      // Calculate the exponential components
-      kconv_exp(1.0, k2a + dk, cr0, num_time, td, c_a_0);
-
-      // shift c_a, wb, cr0 for time delay
-      time_delay_tac(c_a_0, num_time, t_delay, td, c_a);
+      // shift wb, cr0 for time delay
       time_delay_tac(wb, num_time, t_delay, td, wb_delay);
       time_delay_tac(cr0, num_time, t_delay, td, cr0_delay);
 
+      // Calculate the exponential components
+      kconv_exp(1.0, k2a + dk, cr0_delay, num_time, td, c_a);
+
       // Calculate concentration c_t
       for (i = 0; i < num_time; i++) {
-         c_b_0[i] = R1 * cr0[i] + (k2 - R1 * k2a) * c_a_0[i];
-         c_t_0[i] = (1 - vb) * c_b_0[i] + vb * wb[i];
-
          c_b[i] = R1 * cr0_delay[i] + (k2 - R1 * k2a) * c_a[i];
          c_t[i] = (1 - vb) * c_b[i] + vb * wb_delay[i];
       }
@@ -417,9 +413,14 @@ void kconv_srtm_jac(double *p, double dk, double *scant, double td, double *cr0,
          s_t += num_time;
       }
       if (psens[3] == 1) { // wrt time delay
-         time_delay_jac(c_t_0, num_time, t_delay, td, grad_t_delay);
+         time_delay_jac(cr0_delay, num_time, t_delay, td, cr0_grad_delay);
+         time_delay_jac(wb_delay, num_time, t_delay, td, wb_grad_delay);
+         kconv_exp(1.0, k2a + dk, cr0_grad_delay, num_time, td, c_a);
+
 	      for (i=0; i<num_time; i++){ 
-            s_t[i] = - grad_t_delay[i];
+            c_b[i] = R1 * cr0_grad_delay[i] + (k2 - R1 * k2a) * c_a[i];
+            s_t[i] = (1 - vb) * c_b[i] + vb * wb_grad_delay[i];
+            s_t[i] = - s_t[i];
          } 
 	      s_t += num_time;
       }
@@ -432,13 +433,11 @@ void kconv_srtm_jac(double *p, double dk, double *scant, double td, double *cr0,
    // Free allocated memory
    free(c_a);
    free(c_b);
-   free(c_a_0);
-   free(c_b_0);
-   free(c_t_0);
    free(cr0_delay);
    free(wb_delay);
-   free(grad_t_delay);
-
+   free(cr0_grad_delay);
+   free(wb_grad_delay);
+   
    free(c_t);
    free(s_t);
 }
@@ -507,8 +506,8 @@ void kconv_1tcm_jac(double *p, double dk, double *scant, double td, double *cp,
    double   vb, k1, k2, t_delay;
    double   a;
    double  *c_a, *c_t, *s_t;
-   double  *c_a_0, *c_t_0, *wb_delay;  
-   double  *grad_t_delay;                         
+   double  *cp_delay, *wb_delay;  
+   double  *cp_grad_delay, *wb_grad_delay;                         
    int      num_time;
    int      num_par;
 
@@ -524,10 +523,10 @@ void kconv_1tcm_jac(double *p, double dk, double *scant, double td, double *cp,
    c_t = (double*) malloc(sizeof(double) * num_time);
    s_t = (double*) malloc(sizeof(double) * num_time * num_par);
 
-   c_a_0 = (double*) malloc(sizeof(double)*num_time);
-   c_t_0 = (double*) malloc(sizeof(double)*num_time);
+   cp_delay = (double*) malloc(sizeof(double)*num_time);
    wb_delay = (double*) malloc(sizeof(double)*num_time);
-   grad_t_delay  = (double*) malloc(sizeof(double)*num_time);
+   cp_grad_delay  = (double*) malloc(sizeof(double)*num_time);
+   wb_grad_delay  = (double*) malloc(sizeof(double)*num_time);
 
    // Iterate over each voxel
    for (j = 0; j < num_vox; j++) {
@@ -538,15 +537,16 @@ void kconv_1tcm_jac(double *p, double dk, double *scant, double td, double *cp,
       k2 = p[2 + j * 4];
       t_delay = p[3 + j * 4];
 
+      // shift cp, wb for time delay
+      time_delay_tac(cp, num_time, t_delay, td, cp_delay);
+      time_delay_tac(wb, num_time, t_delay, td, wb_delay);
+
       // Calculate the exponential component
       a = k2 + dk;
-      kconv_exp(k1, a, cp, num_time, td, c_a_0);
-      // shift c_a, wb for time delay
-      time_delay_tac(c_a_0, num_time, t_delay, td, c_a);
-      time_delay_tac(wb, num_time, t_delay, td, wb_delay);
+      kconv_exp(k1, a, cp_delay, num_time, td, c_a);
+
       // Calculate the time activity curve
       for (i = 0; i < num_time; i++){
-         c_t_0[i] = (1-vb) * c_a_0[i] + vb * wb[i];
          c_t[i] = (1 - vb) * c_a[i] + vb * wb_delay[i];
       }
 
@@ -568,9 +568,13 @@ void kconv_1tcm_jac(double *p, double dk, double *scant, double td, double *cp,
          s_t += num_time;
       }
       if (psens[3] == 1) { // wrt time delay
-         time_delay_jac(c_t_0, num_time, t_delay, td, grad_t_delay);
+         time_delay_jac(cp_delay, num_time, t_delay, td, cp_grad_delay);
+         time_delay_jac(wb_delay, num_time, t_delay, td, wb_grad_delay);
+         a = k2 + dk;
+         kconv_exp(k1, a, cp_grad_delay, num_time, td, c_a);
 	      for (i=0; i<num_time; i++){ 
-            s_t[i] = - grad_t_delay[i];
+            s_t[i] = (1 - vb) * c_a[i] + vb * wb_grad_delay[i];
+            s_t[i] = - s_t[i];
          } 
 	      s_t += num_time;
       }
@@ -585,10 +589,10 @@ void kconv_1tcm_jac(double *p, double dk, double *scant, double td, double *cp,
    free(c_a);
    free(c_t);
    free(s_t);
-   free(c_a_0);
-   free(c_t_0);
+   free(cp_delay);
    free(wb_delay);
-   free(grad_t_delay);
+   free(cp_grad_delay);
+   free(wb_grad_delay);
 }
 
 //------------------------------------------------------------------------------
@@ -702,7 +706,7 @@ void kconv_liver_jac(double *p, double dk, double *scant, double td, double *ca,
    double   vb, k1, k2, k3, k4, ka, fa, t_delay;
    double   d, a1, a2, f1, f2, b1, b2, k234, tmp;
    double   *c_pv, *cp, *c_a1, *c_a2, *c_f, *c_b, *c_t, *s_t;
-   double   *cp_delay, *c_f_0, *c_b_0, *c_t_0, *c_a1_0, *c_a2_0, *grad_t_delay;
+   double   *ca_delay, *ca_grad_delay;
    int      num_time;
    int      num_par;
 
@@ -722,17 +726,11 @@ void kconv_liver_jac(double *p, double dk, double *scant, double td, double *ca,
    c_f  = (double*) malloc(sizeof(double) * num_time);
    c_b  = (double*) malloc(sizeof(double) * num_time);
 
-   cp_delay   = (double*) malloc(sizeof(double) * num_time);
-   c_a1_0 = (double*) malloc(sizeof(double) * num_time);
-   c_a2_0 = (double*) malloc(sizeof(double) * num_time);
-   c_f_0  = (double*) malloc(sizeof(double) * num_time);
-   c_b_0  = (double*) malloc(sizeof(double) * num_time);
-   c_t_0  = (double*) malloc(sizeof(double) * num_time);
+   ca_delay   = (double*) malloc(sizeof(double) * num_time);
+   ca_grad_delay  = (double*) malloc(sizeof(double)*num_time);
 
    c_t  = (double*) malloc(sizeof(double) * num_time);
    s_t  = (double*) malloc(sizeof(double) * num_time * num_par);
-
-   grad_t_delay  = (double*) malloc(sizeof(double)*num_time);
 
    // Iterate over each voxel
    for (j = 0; j < num_vox; j++) {
@@ -752,22 +750,21 @@ void kconv_liver_jac(double *p, double dk, double *scant, double td, double *ca,
       a1 = (k234 - d) / 2;
       a2 = (k234 + d) / 2;
 
+      // shift ca for time delay
+      time_delay_tac(ca, num_time, t_delay, td, ca_delay);
+
       // Calculate dispersion
       tmp = ka + dk;
-      kconv_exp(ka, tmp, ca, num_time, td, c_pv);
+      kconv_exp(ka, tmp, ca_delay, num_time, td, c_pv);
       for (i = 0; i < num_time; i++) {
-         cp[i] = (1 - fa) * c_pv[i] + fa * ca[i];
+         cp[i] = (1 - fa) * c_pv[i] + fa * ca_delay[i];
       }
 
       // Calculate the exponential components
       tmp = a1 + dk;
-      kconv_exp(1.0, tmp, cp, num_time, td, c_a1_0);
+      kconv_exp(1.0, tmp, cp, num_time, td, c_a1);
       tmp = a2 + dk;
-      kconv_exp(1.0, tmp, cp, num_time, td, c_a2_0);
-      // shift c_a1, c_a2, cp for time delay
-      time_delay_tac(c_a1_0, num_time, t_delay, td, c_a1);
-      time_delay_tac(c_a2_0, num_time, t_delay, td, c_a2);
-      time_delay_tac(cp, num_time, t_delay, td, cp_delay);
+      kconv_exp(1.0, tmp, cp, num_time, td, c_a2);
 
       // Calculate concentrations and sensitivity functions
       if (d == 0) d = 1e9;
@@ -776,13 +773,9 @@ void kconv_liver_jac(double *p, double dk, double *scant, double td, double *ca,
       b1 = k1 / d * k3;
       b2 = -b1;
       for (i = 0; i < num_time; i++) {
-         c_f_0[i] = f1 * c_a1_0[i] + f2 * c_a2_0[i];
-         c_b_0[i] = b1 * c_a1_0[i] + b2 * c_a2_0[i];
-         c_t_0[i] = (1 - vb) * (c_f_0[i] + c_b_0[i]) + vb * cp[i];
-
          c_f[i] = f1 * c_a1[i] + f2 * c_a2[i];
          c_b[i] = b1 * c_a1[i] + b2 * c_a2[i];
-         c_t[i] = (1 - vb) * (c_f[i] + c_b[i]) + vb * cp_delay[i];
+         c_t[i] = (1 - vb) * (c_f[i] + c_b[i]) + vb * cp[i];
       }
 
       // Average the time activity curve over the frame duration
@@ -791,7 +784,7 @@ void kconv_liver_jac(double *p, double dk, double *scant, double td, double *ca,
       // Calculate sensitivity functions for each parameter
       if (psens[0] == 1) { // Sensitivity wrt vb
          for (i = 0; i < num_time; i++)
-            s_t[i] = - (c_f[i] + c_b[i]) + cp_delay[i];
+            s_t[i] = - (c_f[i] + c_b[i]) + cp[i];
          s_t += num_time;
       }
       if (psens[1] == 1 || psens[2] == 1) { 
@@ -834,15 +827,14 @@ void kconv_liver_jac(double *p, double dk, double *scant, double td, double *ca,
       }
       if (psens[5] == 1 || psens[6] == 1) { 
          for (i = 0; i < num_time; i++) {
-            cp[i] = ca[i] - c_pv[i];
+            cp[i] = ca_delay[i] - c_pv[i];
          }
-         time_delay_tac(cp, num_time, t_delay, td, cp_delay);
          f1 = k1 / d * (k4 - a1);
          f2 = k1 / d * (a2 - k4);
       }
       if (psens[5] == 1) { // Sensitivity wrt ka
          tmp = ka + dk;
-         kconv_exp(1.0, tmp, cp_delay, num_time, td, c_t);
+         kconv_exp(1.0, tmp, cp, num_time, td, c_t);
          for (i = 0; i < num_time; i++) {
             c_t[i] = (1.0 - fa) * c_t[i];
          }
@@ -857,18 +849,39 @@ void kconv_liver_jac(double *p, double dk, double *scant, double td, double *ca,
       }
       if (psens[6] == 1) { // Sensitivity wrt fa
          tmp = a1 + dk;
-         kconv_exp(1.0, tmp, cp_delay, num_time, td, c_a1);
+         kconv_exp(1.0, tmp, cp, num_time, td, c_a1);
          tmp = a2 + dk;
-         kconv_exp(1.0, tmp, cp_delay, num_time, td, c_a2);
+         kconv_exp(1.0, tmp, cp, num_time, td, c_a2);
          for (i = 0; i < num_time; i++) {
-            s_t[i] = (1 - vb) * ((f1 + b1) * c_a1[i] + (f2 + b2) * c_a2[i]) + vb * cp_delay[i];
+            s_t[i] = (1 - vb) * ((f1 + b1) * c_a1[i] + (f2 + b2) * c_a2[i]) + vb * cp[i];
          }
          s_t += num_time;
       }
       if (psens[7] == 1) { // wrt time delay
-         time_delay_jac(c_t_0, num_time, t_delay, td, grad_t_delay);
+         time_delay_jac(ca_delay, num_time, t_delay, td, ca_grad_delay);
+         tmp = ka + dk;
+         kconv_exp(ka, tmp, ca_grad_delay, num_time, td, c_pv);
+         for (i = 0; i < num_time; i++) {
+            cp[i] = (1 - fa) * c_pv[i] + fa * ca_grad_delay[i];
+         }
+         // Calculate the exponential components
+         tmp = a1 + dk;
+         kconv_exp(1.0, tmp, cp, num_time, td, c_a1);
+         tmp = a2 + dk;
+         kconv_exp(1.0, tmp, cp, num_time, td, c_a2);
+
+         // Calculate concentrations and sensitivity functions
+         if (d == 0) d = 1e9;
+         f1 = k1 / d * (k4 - a1);
+         f2 = k1 / d * (a2 - k4);
+         b1 = k1 / d * k3;
+         b2 = -b1;
+
 	      for (i=0; i<num_time; i++){ 
-            s_t[i] = - grad_t_delay[i];
+            c_f[i] = f1 * c_a1[i] + f2 * c_a2[i];
+            c_b[i] = b1 * c_a1[i] + b2 * c_a2[i];
+            s_t[i] = (1 - vb) * (c_f[i] + c_b[i]) + vb * cp[i];
+            s_t[i] = - s_t[i];
          } 
 	      s_t += num_time;
       }
@@ -886,13 +899,8 @@ void kconv_liver_jac(double *p, double dk, double *scant, double td, double *ca,
    free(c_f);
    free(c_b);
 
-   free(cp_delay);
-   free(c_f_0);
-   free(c_b_0);
-   free(c_t_0);
-   free(c_a1_0);
-   free(c_a2_0);
-   free(grad_t_delay);
+   free(ca_delay);
+   free(ca_grad_delay);
 
    free(c_t);
    free(s_t);

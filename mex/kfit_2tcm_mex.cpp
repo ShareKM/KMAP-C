@@ -1,5 +1,5 @@
 #include "mex.h"
-#include "kinlib.h"
+#include "kmaplib.h"
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file implements the fitting of a two-tissue kinetic model (2TCM) using
