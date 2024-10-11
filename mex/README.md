@@ -20,7 +20,7 @@ The compilation command should be run in the MATLAB Command Window or a terminal
 >
 ### Usage:
 
-The usage command should be run within the MATLAB environment after the MEX file has been successfully compiled. It executes the compiled MEX function with the specified input arguments.
+The usage command should be run within the MATLAB environment after the MEX file has been successfully compiled. It executes the compiled MEX function with the specified input arguments. Please go to the **KMAP-M** package for details.
 
 ## MEX Files for Generating a Model Time Activity Curve (TAC)
 
