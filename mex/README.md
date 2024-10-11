@@ -121,7 +121,7 @@ OpenMP (OMP) is also employed in several MEX files to leverage parallel processi
 ### Inputs:
 - `tac`: Time activity curve (TAC) data.
 - `w`: Weights for fitting the TAC data.
-- `scant`: Scan time data.
+- `scant`: Scan time, including the start time and end time of each frame.
 - `blood`: Blood input function.
 - `wblood`: Whole blood data.
 - `dk`: Decay constant. It is set to 0 if your TAC is already decay corrected.
