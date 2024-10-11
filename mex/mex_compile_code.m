@@ -1,6 +1,6 @@
 % This is a MATLAB script demonstrating compiling kinetic model files
 %
-% Oct 2024.
+% OpenKMAP Oct 2024.
 
 % Collect the files of different kinetic models
 kmodFiles = {'ktac_1tcm_mex', 'kfit_1tcm_mex', 'kfit_1tcm_mex_omp', ...
