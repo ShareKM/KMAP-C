@@ -15,6 +15,9 @@ The compilation command should be run in the MATLAB Command Window or a terminal
 
 **Important:** Before compiling any of the MEX files, ensure that all required source files (`kmaplib.h`, `kmaplib_common.cpp`, `kmaplib_infun.cpp`, `kmaplib_models.cpp`, `kmaplib_optimization.cpp`) from the `src` directory are included.
 
+>[!NOTE]
+>see `mex_compile_code` for an example to compile the mex files in MATLAB.
+>
 ### Usage:
 
 The usage command should be run within the MATLAB environment after the MEX file has been successfully compiled. It executes the compiled MEX function with the specified input arguments.
