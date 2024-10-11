@@ -90,23 +90,6 @@ void kconv_2tcm_jac(double *p, double dk, double *scant, double td, double *cp,
                     double *st);
 
 /*
- * kconv_srtm_tac
- * 
- * Calculates the TAC for the Simplified Reference Tissue Model (SRTM).
- */
-void kconv_srtm_tac(double *p, double dk, double *scant, double td, double *cr0, 
-                    double *wb, int num_frm, int num_vox, double *ct);
-
-/*
- * kconv_srtm_jac
- * 
- * Calculates the Jacobian for the Simplified Reference Tissue Model (SRTM).
- */
-void kconv_srtm_jac(double *p, double dk, double *scant, double td, double *cr0, 
-                    double *wb, int num_frm, int num_vox, double *ct, int *psens, 
-                    double *st);
-
-/*
  * kconv_1tcm_tac
  * 
  * Calculates the TAC for a 1-tissue compartment model with 3 parameters.
