@@ -1,4 +1,4 @@
-# Open KMAP-C Toolkit
+# OpenKMAP-C Toolkit
 
 ## Overview of OpenKMAP
 
