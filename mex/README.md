@@ -26,10 +26,10 @@ The usage command should be run within the MATLAB environment after the MEX file
 
 ### Inputs:
 - `par`: Model parameters.
-- `scant`: Scan time data.
+- `scant`: Scan time, including the start time and end time of each frame.
 - `blood`: Blood input data.
 - `wblood`: Whole blood data.
-- `dk`: Decay constant, which is normally set to 0 if your data is already decay corrected.
+- `dk`: Decay constant, which is set to 0 if your data is already decay corrected.
 - `td`: Time step for numerical convolution calculation. It is normally 1 sec.
 
 ### Outputs:
