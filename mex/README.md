@@ -68,14 +68,14 @@ The usage command should be run within the MATLAB environment after the MEX file
 ### Inputs:
 - `tac`: Time activity curve (TAC) data.
 - `w`: Weights for fitting the TAC data.
-- `scant`: Scan time data.
+- `scant`: Scan time, including the start time and end time of each frame
 - `blood`: Blood input function.
 - `wblood`: Whole blood data.
 - `dk`: Decay constant. It is normally 0 if your TAC is already decay corrected.
 - `pinit`: Initial parameters for the model.
 - `lb`: Lower bounds for the parameters.
 - `ub`: Upper bounds for the parameters.
-- `psens`: Sensitivity matrix for the parameters.
+- `psens`: Sensitivity indicator for the parameters.
 - `maxit`: Maximum number of iterations.
 - `td`: Time step for numerical convolution calculation. It is often set to 1 sec.
 
