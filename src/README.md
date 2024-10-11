@@ -1,4 +1,4 @@
-# C-KMAP Source Files
+# KMAP-C Source Files
 
 The `src` folder contains the core C++ source code files used to define and implement the kinetic models, optimization routines, and utility functions. These files may compiled and integrated with the MEX functions to allow for MATLAB integration.
 
