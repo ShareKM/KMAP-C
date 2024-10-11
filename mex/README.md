@@ -7,13 +7,13 @@ Each MEX file is accompanied by detailed instructions on its usage, input, outpu
 ## Files in This Folder
 
 - **Precompiled MEX Files**: Precompiled MEX binaries for Windows (`*.mexw64`), Linux (`*.mexa64`), and macOS (`*.mexmaci64`) are available in three separate folders: `Precompiled_Windows_Binaries`, `Precompiled_Linux_Binaries`, and `Precompiled_MacOS_Binaries`. Go to the respective folder depending on your system to access the binaries for direct use in MATLAB.
-- **Source Code Files**: MEX source files (`*.cpp`) that implement the kinetic models in conjunction with the core source files from the `KMAP_source_files` folder.
+- **Source Code Files**: MEX source files (`*.cpp`) that implement the kinetic models in conjunction with the core source files from the `src` folder.
 
 ### Compilation Instruction:
 
 The compilation command should be run in the MATLAB Command Window or a terminal/shell where you have access to the MATLAB `mex` compiler. This command compiles the C++ source code into a MEX file that can be executed within MATLAB.
 
-**Important:** Before compiling any of the MEX files, ensure that all required source files (`kinlib.h`, `kinlib_common.cpp`, `kinlib_models.cpp`, `kinlib_optimization.cpp`) from the `KMAP_source_files` directory are placed in the same directory as the MEX files.
+**Important:** Before compiling any of the MEX files, ensure that all required source files (`kmaplib.h`, `kmaplib_common.cpp`, `kmaplib_models.cpp`, `kmaplib_optimization.cpp`) from the `src` directory are placed in the same directory as the MEX files.
 
 ### Usage:
 
@@ -40,7 +40,7 @@ The usage command should be run within the MATLAB environment after the MEX file
 
    - **Compilation Instruction**:
      ```matlab
-     mex ktac_1tcm_mex.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp -output ktac_1tcm
+     mex ktac_1tcm_mex.cpp kmaplib_models.cpp kmaplib_optimization.cpp kmaplib_common.cpp -output ktac_1tcm
      ```
    - **Usage**:
      ```matlab
@@ -52,7 +52,7 @@ The usage command should be run within the MATLAB environment after the MEX file
 
    - **Compilation Instruction**:
      ```matlab
-     mex ktac_2tcm_mex.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp -output ktac_2tcm
+     mex ktac_2tcm_mex.cpp kmaplib_models.cpp kmaplib_optimization.cpp kmaplib_common.cpp -output ktac_2tcm
      ```
    - **Usage**:
      ```matlab
@@ -64,7 +64,7 @@ The usage command should be run within the MATLAB environment after the MEX file
 
     - **Compilation Instruction**:
       ```matlab
-      mex ktac_liver_mex.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp -output ktac_liver
+      mex ktac_liver_mex.cpp kmaplib_models.cpp kmaplib_optimization.cpp kmaplib_common.cpp -output ktac_liver
       ```
     - **Usage**:
       ```matlab
@@ -76,7 +76,7 @@ The usage command should be run within the MATLAB environment after the MEX file
 
     - **Compilation Instruction**:
       ```matlab
-      mex ktac_srtm_mex.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp -output ktac_srtm
+      mex ktac_srtm_mex.cpp kmaplib_models.cpp kmaplib_optimization.cpp kmaplib_common.cpp -output ktac_srtm
       ```
     - **Usage**:
       ```matlab
@@ -110,7 +110,7 @@ The usage command should be run within the MATLAB environment after the MEX file
 
    - **Compilation Instruction**:
      ```matlab
-     mex kfit_1tcm_mex.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp -output kfit_1tcm
+     mex kfit_1tcm_mex.cpp kmaplib_models.cpp kmaplib_optimization.cpp kmaplib_common.cpp -output kfit_1tcm
      ```
    - **Usage**:
      ```matlab
@@ -122,7 +122,7 @@ The usage command should be run within the MATLAB environment after the MEX file
 
    - **Compilation Instruction**:
      ```matlab
-     mex kfit_2tcm_mex.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp -output kfit_2tcm
+     mex kfit_2tcm_mex.cpp kmaplib_models.cpp kmaplib_optimization.cpp kmaplib_common.cpp -output kfit_2tcm
      ```
    - **Usage**:
      ```matlab
@@ -134,7 +134,7 @@ The usage command should be run within the MATLAB environment after the MEX file
 
    - **Compilation Instruction**:
      ```matlab
-     mex kfit_liver_mex.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp -output kfit_liver
+     mex kfit_liver_mex.cpp kmaplib_models.cpp kmaplib_optimization.cpp kmaplib_common.cpp -output kfit_liver
      ```
    - **Usage**:
      ```matlab
@@ -146,7 +146,7 @@ The usage command should be run within the MATLAB environment after the MEX file
 
    - **Compilation Instruction**:
      ```matlab
-     mex kfit_srtm_mex.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp -output kfit_srtm
+     mex kfit_srtm_mex.cpp kmaplib_models.cpp kmaplib_optimization.cpp kmaplib_common.cpp -output kfit_srtm
      ```
    - **Usage**:
      ```matlab
@@ -187,11 +187,11 @@ OpenMP (OMP) is also employed in several MEX files to leverage parallel processi
    - **Compilation Instructions**:
      - **Windows**:
        ```matlab
-       mex kfit_1tcm_mex_omp.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp -output kfit_1tcm_mex_omp CXXFLAGS="$CXXFLAGS -fopenmp" LDFLAGS="$LDFLAGS -fopenmp"
+       mex kfit_1tcm_mex_omp.cpp kmaplib_models.cpp kmaplib_optimization.cpp kmaplib_common.cpp -output kfit_1tcm_mex_omp CXXFLAGS="$CXXFLAGS -fopenmp" LDFLAGS="$LDFLAGS -fopenmp"
        ```
      - **Linux**:
        ```matlab
-       mex kfit_1tcm_mex_omp.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp -output kfit_1tcm_mex_omp CXXFLAGS="\$CXXFLAGS -fopenmp" LDFLAGS="\$LDFLAGS -fopenmp"
+       mex kfit_1tcm_mex_omp.cpp kmaplib_models.cpp kmaplib_optimization.cpp kmaplib_common.cpp -output kfit_1tcm_mex_omp CXXFLAGS="\$CXXFLAGS -fopenmp" LDFLAGS="\$LDFLAGS -fopenmp"
        ```
    - **Usage**:
      ```matlab
@@ -204,11 +204,11 @@ OpenMP (OMP) is also employed in several MEX files to leverage parallel processi
    - **Compilation Instructions**:
      - **Windows**:
        ```matlab
-       mex kfit_2tcm_mex_omp.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp -output kfit_2tcm_mex_omp CXXFLAGS="$CXXFLAGS -fopenmp" LDFLAGS="$LDFLAGS -fopenmp"
+       mex kfit_2tcm_mex_omp.cpp kmaplib_models.cpp kmaplib_optimization.cpp kmaplib_common.cpp -output kfit_2tcm_mex_omp CXXFLAGS="$CXXFLAGS -fopenmp" LDFLAGS="$LDFLAGS -fopenmp"
        ```
      - **Linux**:
        ```matlab
-       mex kfit_2tcm_mex_omp.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp -output kfit_2tcm_mex_omp CXXFLAGS="\$CXXFLAGS -fopenmp" LDFLAGS="\$LDFLAGS -fopenmp"
+       mex kfit_2tcm_mex_omp.cpp kmaplib_models.cpp kmaplib_optimization.cpp kmaplib_common.cpp -output kfit_2tcm_mex_omp CXXFLAGS="\$CXXFLAGS -fopenmp" LDFLAGS="\$LDFLAGS -fopenmp"
        ```
    - **Usage**:
      ```matlab
@@ -221,11 +221,11 @@ OpenMP (OMP) is also employed in several MEX files to leverage parallel processi
    - **Compilation Instructions**:
      - **Windows**:
        ```matlab
-       mex kfit_liver_mex_omp.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp -output kfit_liver_mex_omp CXXFLAGS="$CXXFLAGS -fopenmp" LDFLAGS="$LDFLAGS -fopenmp"
+       mex kfit_liver_mex_omp.cpp kmaplib_models.cpp kmaplib_optimization.cpp kmaplib_common.cpp -output kfit_liver_mex_omp CXXFLAGS="$CXXFLAGS -fopenmp" LDFLAGS="$LDFLAGS -fopenmp"
        ```
      - **Linux**:
        ```matlab
-       mex kfit_liver_mex_omp.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp -output kfit_liver_mex_omp CXXFLAGS="\$CXXFLAGS -fopenmp" LDFLAGS="\$LDFLAGS -fopenmp"
+       mex kfit_liver_mex_omp.cpp kmaplib_models.cpp kmaplib_optimization.cpp kmaplib_common.cpp -output kfit_liver_mex_omp CXXFLAGS="\$CXXFLAGS -fopenmp" LDFLAGS="\$LDFLAGS -fopenmp"
        ```
    - **Usage**:
      ```matlab
@@ -238,11 +238,11 @@ OpenMP (OMP) is also employed in several MEX files to leverage parallel processi
    - **Compilation Instructions**:
      - **Windows**:
        ```matlab
-       mex kfit_srtm_mex_omp.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp -output kfit_srtm_mex_omp CXXFLAGS="$CXXFLAGS -fopenmp" LDFLAGS="$LDFLAGS -fopenmp"
+       mex kfit_srtm_mex_omp.cpp kmaplib_models.cpp kmaplib_optimization.cpp kmaplib_common.cpp -output kfit_srtm_mex_omp CXXFLAGS="$CXXFLAGS -fopenmp" LDFLAGS="$LDFLAGS -fopenmp"
        ```
      - **Linux**:
        ```matlab
-       mex kfit_srtm_mex_omp.cpp kinlib_models.cpp kinlib_optimization.cpp kinlib_common.cpp -output kfit_srtm_mex_omp CXXFLAGS="\$CXXFLAGS -fopenmp" LDFLAGS="\$LDFLAGS -fopenmp"
+       mex kfit_srtm_mex_omp.cpp kmaplib_models.cpp kmaplib_optimization.cpp kmaplib_common.cpp -output kfit_srtm_mex_omp CXXFLAGS="\$CXXFLAGS -fopenmp" LDFLAGS="\$LDFLAGS -fopenmp"
        ```
 
 

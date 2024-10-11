@@ -412,7 +412,7 @@ void kconv_srtm_jac(double *p, double dk, double *scant, double td, double *cr0,
             s_t[i] = (1 - vb) * c_a[i];
          s_t += num_time;
       }
-      if (psens[3] == 1) { // wrt time delay
+      if (psens[4] == 1) { // wrt time delay
          time_delay_jac(cr0_delay, num_time, td, cr0_grad_delay);
          time_delay_jac(wb_delay, num_time, td, wb_grad_delay);
          kconv_exp(1.0, k2a + dk, cr0_grad_delay, num_time, td, c_a);
