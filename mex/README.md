@@ -81,7 +81,7 @@ The usage command should be run within the MATLAB environment after the MEX file
 
 ### Outputs:
 - `p`: Estimated parameters.
-- `c`: Fitted curve.
+- `c`: Fitted TAC.
 
 ### MEX Files
 
