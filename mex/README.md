@@ -9,7 +9,7 @@ Each MEX file is accompanied by detailed instructions on its usage, input, and o
 - **Precompiled MEX Files**: Precompiled MEX binaries for Windows (`*.mexw64`), Linux (`*.mexa64`), and macOS (`*.mexmaci64`) are available in three separate folders: `Precompiled_Windows_Binaries`, `Precompiled_Linux_Binaries`, and `Precompiled_MacOS_Binaries`. Go to the respective folder depending on your system to access the binaries for direct use in MATLAB.
 - **Source Code Files**: MEX source files (`*.cpp`) that implement the kinetic models in conjunction with the core source files from the `src` folder.
 
-### Compilation Instruction:
+## Compilation Instruction:
 
 The compilation command should be run in the MATLAB Command Window or a terminal/shell where you have access to the MATLAB `mex` compiler. This command compiles the C++ source code into a MEX file that can be executed within MATLAB.
 
@@ -18,7 +18,7 @@ The compilation command should be run in the MATLAB Command Window or a terminal
 >[!NOTE]
 >see `mex_compile_code.m` for an example to compile the mex files in MATLAB.
 >
-### Usage:
+## Usage:
 
 The usage command should be run within the MATLAB environment after the MEX file has been successfully compiled. It executes the compiled MEX function with the specified input arguments. Please go to the **KMAP-M** package for details.
 
