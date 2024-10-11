@@ -138,8 +138,11 @@ void kconv_2tcm_jac(double *p, double dk, double *scant, double td, double *cp,
    c_a2 = (double*) malloc(sizeof(double) * num_time);
    c_f  = (double*) malloc(sizeof(double) * num_time);
    c_b  = (double*) malloc(sizeof(double) * num_time);
+
+   // shift cp, wb for time delay
    wb_delay  = (double*) malloc(sizeof(double)*num_time);
    cp_delay  = (double*) malloc(sizeof(double)*num_time);
+	
    c_t  = (double*) malloc(sizeof(double) * num_time);
    s_t  = (double*) malloc(sizeof(double) * num_time * num_par);
    cp_grad_delay  = (double*) malloc(sizeof(double)*num_time);
@@ -238,13 +241,13 @@ void kconv_2tcm_jac(double *p, double dk, double *scant, double td, double *cp,
          f2 = k1 / d * (a2 - k4);
          b1 = k1 / d * k3;
          b2 = -b1;	
-	      for (i=0; i<num_time; i++){ 
+	 for (i=0; i<num_time; i++){ 
             c_f[i] = f1 * c_a1[i] + f2 * c_a2[i];
             c_b[i] = b1 * c_a1[i] + b2 * c_a2[i];
             s_t[i] = (1 - vb) * (c_f[i] + c_b[i]) + vb *wb_grad_delay[i];
             s_t[i] = - s_t[i];
          } 
-	      s_t += num_time;
+	 s_t += num_time;
       }
 
       s_t -= num_time * num_par;
@@ -263,181 +266,6 @@ void kconv_2tcm_jac(double *p, double dk, double *scant, double td, double *cp,
    free(wb_delay);
    free(cp_grad_delay);
    free(wb_grad_delay);
-   free(c_t);
-   free(s_t);
-}
-
-//------------------------------------------------------------------------------
-// kconv_srtm_tac
-//------------------------------------------------------------------------------
-// Calculates the time activity curve (TAC) using the simplified reference tissue model (SRTM).
-// This model uses four parameters: vb, R1, k2, and BP.
-void kconv_srtm_tac(double *p, double dk, double *scant, double td, double *cr0, 
-                    double *wb, int num_frm, int num_vox, double *ct)
-{
-   int      i, j;
-   double   vb, R1, k2, BP, t_delay;
-   double   k2a, a;
-   double  *c_a, *c_t;
-   double  *cr0_delay, *wb_delay;
-   int      num_time;
-
-   // Memory allocation for intermediate calculations
-   num_time = (int) (scant[2*num_frm-1]/td);
-   c_a = (double*) malloc(sizeof(double)*num_time);
-   c_t = (double*) malloc(sizeof(double)*num_time);
-   cr0_delay = (double*) malloc(sizeof(double)*num_time);
-   wb_delay = (double*) malloc(sizeof(double)*num_time);
-
-   for (j = 0; j < num_vox; j++) {
-      // Parameter transformations
-      vb = p[0 + j * 5];
-      R1 = p[1 + j * 5];
-      k2 = p[2 + j * 5];
-      BP = p[3 + j * 5];
-      t_delay = p[4+j*5];
-
-      // get delayed cr0/wb
-      time_delay_tac(wb, num_time, t_delay, td, wb_delay);
-      time_delay_tac(cr0, num_time, t_delay, td, cr0_delay);
-      // Convolution with exponential functions
-      k2a = k2 / (1.0 + BP);
-      a = k2a + dk;
-      kconv_exp(1.0, a, cr0_delay, num_time, td, c_a);
-
-      // Compute tissue concentration
-      for (i = 0; i < num_time; i++)
-         c_t[i] = (1 - vb) * (R1 * cr0_delay[i] + (k2 - R1 * k2a) * c_a[i]) + vb * wb_delay[i];
-
-      // Frame-averaged activity
-      frame(scant, td, c_t, num_frm, 1, ct + j * num_frm);
-   }
-
-   // Free allocated memory
-   free(c_a);
-   free(c_t);
-   free(cr0_delay);
-   free(wb_delay);
-}
-
-//------------------------------------------------------------------------------
-// kconv_srtm_jac
-//------------------------------------------------------------------------------
-// Calculates the time activity curves and sensitivity functions for the 
-// Simplified Reference Tissue Model (SRTM).
-void kconv_srtm_jac(double *p, double dk, double *scant, double td, double *cr0, 
-                    double *wb, int num_frm, int num_vox, double *ct, int *psens, 
-                    double *st)
-{
-   int      i, j;
-   double   vb, R1, k2, BP, t_delay;
-   double   k2a;
-   double   *c_a, *c_b, *c_t, *s_t;
-   double   *wb_delay, *cr0_delay;
-   double   *cr0_grad_delay, *wb_grad_delay;
-   int      num_time;
-   int      num_par;
-
-   // Determine the number of sensitive parameters
-   num_par = 0;
-   for (i = 0; i < 5; i++) { 
-      if (psens[i] == 1)
-         ++num_par;
-   }
-
-   // Allocate memory for intermediate calculations
-   num_time = (int) (scant[2*num_frm-1] / td);
-   c_a = (double*) malloc(sizeof(double) * num_time);
-   c_b = (double*) malloc(sizeof(double) * num_time);
-   wb_delay = (double*) malloc(sizeof(double) * num_time);
-   cr0_delay = (double*) malloc(sizeof(double) * num_time);
-
-   c_t = (double*) malloc(sizeof(double) * num_time);
-   s_t = (double*) malloc(sizeof(double) * num_time * num_par);
-
-   cr0_grad_delay  = (double*) malloc(sizeof(double)*num_time);
-   wb_grad_delay  = (double*) malloc(sizeof(double)*num_time);
-
-   // Iterate over each voxel
-   for (j = 0; j < num_vox; j++) {
-
-      // Assign parameters
-      vb = p[0 + j * 5];
-      R1 = p[1 + j * 5];
-      k2 = p[2 + j * 5];
-      BP = p[3 + j * 5];
-      t_delay = p[4 + j * 5];
-
-      // Compute k2a
-      k2a = k2 / (1.0 + BP);
-      
-      // shift wb, cr0 for time delay
-      time_delay_tac(wb, num_time, t_delay, td, wb_delay);
-      time_delay_tac(cr0, num_time, t_delay, td, cr0_delay);
-
-      // Calculate the exponential components
-      kconv_exp(1.0, k2a + dk, cr0_delay, num_time, td, c_a);
-
-      // Calculate concentration c_t
-      for (i = 0; i < num_time; i++) {
-         c_b[i] = R1 * cr0_delay[i] + (k2 - R1 * k2a) * c_a[i];
-         c_t[i] = (1 - vb) * c_b[i] + vb * wb_delay[i];
-      }
-
-      // Average the values over frame duration
-      frame(scant, td, c_t, num_frm, 1, ct + j * num_frm);
-
-      // Calculate sensitivity functions for each parameter
-      if (psens[0] == 1) { // Sensitivity wrt vb
-         for (i = 0; i < num_time; i++)
-            s_t[i] = -c_b[i] + wb_delay[i];
-         s_t += num_time;
-      }
-      if (psens[1] == 1) { // Sensitivity wrt R1
-         for (i = 0; i < num_time; i++)
-            s_t[i] = (1 - vb) * (cr0_delay[i] - k2a * c_a[i]);
-         s_t += num_time;
-      }
-      if (psens[2] == 1) { // Sensitivity wrt k2
-         for (i = 0; i < num_time; i++)
-            c_t[i] = cr0_delay[i] - c_b[i] / (1.0 + BP);
-         kconv_exp(1.0, k2a + dk, c_t, num_time, td, c_a);
-         for (i = 0; i < num_time; i++)
-            s_t[i] = (1 - vb) * c_a[i];
-         s_t += num_time;
-      }
-      if (psens[3] == 1) { // Sensitivity wrt BP
-         kconv_exp(k2a / (1 + BP), k2a + dk, c_b, num_time, td, c_a);
-         for (i = 0; i < num_time; i++)
-            s_t[i] = (1 - vb) * c_a[i];
-         s_t += num_time;
-      }
-      if (psens[4] == 1) { // wrt time delay
-         time_delay_jac(cr0_delay, num_time, td, cr0_grad_delay);
-         time_delay_jac(wb_delay, num_time, td, wb_grad_delay);
-         kconv_exp(1.0, k2a + dk, cr0_grad_delay, num_time, td, c_a);
-
-	      for (i=0; i<num_time; i++){ 
-            c_b[i] = R1 * cr0_grad_delay[i] + (k2 - R1 * k2a) * c_a[i];
-            s_t[i] = (1 - vb) * c_b[i] + vb * wb_grad_delay[i];
-            s_t[i] = - s_t[i];
-         } 
-	      s_t += num_time;
-      }
-      s_t -= num_time * num_par;
-
-      // Average the sensitivity functions over frame duration
-      frame(scant, td, s_t, num_frm, num_par, st + j * num_frm * num_par);
-   }
-
-   // Free allocated memory
-   free(c_a);
-   free(c_b);
-   free(cr0_delay);
-   free(wb_delay);
-   free(cr0_grad_delay);
-   free(wb_grad_delay);
-   
    free(c_t);
    free(s_t);
 }
@@ -576,7 +404,7 @@ void kconv_1tcm_jac(double *p, double dk, double *scant, double td, double *cp,
             s_t[i] = (1 - vb) * c_a[i] + vb * wb_grad_delay[i];
             s_t[i] = - s_t[i];
          } 
-	      s_t += num_time;
+	 s_t += num_time;
       }
       s_t -= num_time * num_par;
 
