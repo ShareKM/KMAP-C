@@ -4,24 +4,7 @@ The `src` folder contains the core C++ source code files used to define and impl
 
 ## Source Files
 
-1. **`kmaplib_models.cpp`**: 
-   - **Purpose**: Contains the implementations of TAC (Time-Activity Curve) and Jacobian calculations for the various kinetic models.
-   - **Key Functions**:
-     - **TAC Evaluation**:
-       - `tac_eval`: Computes TACs for given model parameters.
-       - `kconv_1tcm_tac`, `kconv_2tcm_tac`, `kconv_liver_tac`: Specialized TAC computation functions for the respective models.
-     - **Jacobian Calculation**:
-       - `jac_eval`: Computes the Jacobian matrix for TACs with respect to the kinetic parameters.
-       - `kconv_1tcm_jac`, `kconv_2tcm_jac`, `kconv_liver_jac`: Specialized Jacobian calculation functions.
-
-2. **`kmaplib_optimization.cpp`**:
-   - **Purpose**: Contains the optimization routines used in the library, including the Levenberg-Marquardt algorithm.
-   - **Key Functions**:
-     - **Optimization**:
-       - `kmap_levmar`: Levenberg-Marquardt (LM) algorithm for optimizing model parameters to fit TAC data.
-       - `bcd_pls`: Bounded coordinate descent for quadratic optimization with constraints. This is used in the LM algorithm.
-
-3. **`kmaplib_common.cpp`**:
+1. **`kmaplib_common.cpp`**:
    - **Purpose**: Contains common utility functions used across different models and optimization routines.
    - **Key Functions**:
      - **Convolution Operations**:
@@ -32,12 +15,29 @@ The `src` folder contains the core C++ source code files used to define and impl
      - **Parameter Handling**:
        - `setkin`, `getkin`: Functions for defining and handling sensitive parameters during optimization.
 
-4. **`kmaplib_infun.cpp`**:
+2. **`kmaplib_infun.cpp`**:
    - **Purpose**: Contains the routines used for processing the input function.
    - **Key Functions**:
      - **Time Delay Correction**:
        - `time_delay_tac`: Computes time-delayed TAC curves by shifting the TAC in time.
        - `time_delay_jac`: Computes the Jacobian for time delay correction.
+
+3. **`kmaplib_models.cpp`**: 
+   - **Purpose**: Contains the implementations of TAC (Time-Activity Curve) and Jacobian calculations for the various kinetic models.
+   - **Key Functions**:
+     - **TAC Evaluation**:
+       - `tac_eval`: Computes TACs for given model parameters.
+       - `kconv_1tcm_tac`, `kconv_2tcm_tac`, `kconv_liver_tac`: Specialized TAC computation functions for the respective models.
+     - **Jacobian Calculation**:
+       - `jac_eval`: Computes the Jacobian matrix for TACs with respect to the kinetic parameters.
+       - `kconv_1tcm_jac`, `kconv_2tcm_jac`, `kconv_liver_jac`: Specialized Jacobian calculation functions.
+
+4. **`kmaplib_optimization.cpp`**:
+   - **Purpose**: Contains the optimization routines used in the library, including the Levenberg-Marquardt algorithm.
+   - **Key Functions**:
+     - **Optimization**:
+       - `kmap_levmar`: Levenberg-Marquardt (LM) algorithm for optimizing model parameters to fit TAC data.
+       - `boundpls_cd`: Bounded coordinate descent for quadratic optimization with constraints. This is used in the LM algorithm.
 
 ## Optimization Methods Used
 
