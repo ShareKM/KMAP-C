@@ -1,4 +1,4 @@
-# OpenKMAP-C MEX Files for MATLAB
+# KMAP-C MEX Files for MATLAB
 
 This folder contains MEX files, along with their source code, that allow for running the KMAP-C library in MATLAB. These files enable fitting and generating time activity curves for kinetic models using the Levenberg-Marquardt algorithm and other advanced optimization methods. Precompiled MEX binaries are also included and can be used directly in MATLAB without recompilation, provided they are compatible with your system architecture.
 
