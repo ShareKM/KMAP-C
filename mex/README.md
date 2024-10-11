@@ -36,7 +36,7 @@ The usage command should be run within the MATLAB environment after the MEX file
 - `c`: Computed time activity curve (TAC).
 - `s`: Jacobian matrix (if requested).
 
-### MEX Files
+### Example of MEX Files
 
 1. **ktac_1tcm_mex.cpp**
    - **Purpose**: Implements the computation of the time activity curve (TAC) and its Jacobian for a one-tissue compartmental model (1TCM).
@@ -136,7 +136,7 @@ OpenMP (OMP) is also employed in several MEX files to leverage parallel processi
 - `p`: Estimated parameters.
 - `c`: Fitted curve.
 
-### MEX Files
+### Example of MEX Files
 
 1. **kfit_1tcm_mex_omp.cpp**
    - **Purpose**: Implements the fitting of a one-tissue compartmental model (1TCM) using the Levenberg-Marquardt algorithm with OpenMP for running in MATLAB.
