@@ -21,7 +21,7 @@ for i = 1:length(kmodFiles)
     '-I../src/'); 
 end
 
-%% Compilatoin for files with OMP
+%% Compilation for files with OMP
 %
 % % Collect the files of different kinetic models that are with omp
 % kmodFiles = {'kfit_1tcm_mex_omp', ...
