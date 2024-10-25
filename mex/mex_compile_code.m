@@ -2,7 +2,7 @@
 %
 % OpenKMAP Oct 2024.
 
-%% Compilatoin (without OMP)
+%% Compilation (without OMP)
 %
 % Collect the files of different kinetic models
 kmodFiles = {'ktac_1tcm_mex', 'kfit_1tcm_mex', ...
