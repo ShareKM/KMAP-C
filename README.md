@@ -14,6 +14,9 @@ The Open **KMAP-C Toolkit** is a core C/C++ source code library to define and im
 
 Currently, this C toolkit is not aimed at providing a comprehensive modeling solution but instead, a development backbone to support those time-consuming tracer kinetic models for high-level programming languages such as MATLAB and Python. Therefore the toolkit also includes wapper functions designed to integrate the kinetic modeling implementations for other programming languages, primarily MATLAB but may be extended for Python in the future. Please find the **KMAP-M** toolbox that offers more kinetic modeling approaches to be used with MATLAB.
 
+## Contributors
+See the full list of [Contributors](CONTRIBUTORS.md).
+
 ## Licensing
 
 This repository is licensed under [MIT License](KMAP-C/LICENSE).
