@@ -6,7 +6,7 @@ The **Kinetic Modeling and Analysis Package (KMAP)** is an open-source software 
 
 ## KMAP-C Toolkit
 
-The Open **KMAP-C Toolkit** is a core C/C++ source code library to define and implement the input function, kinetic models, optimization algorithms, and utility functions. For parametric imaging (voxel-wise kinetic modeling), it adopts the OpenMP parallel programming model for acceleration. 
+The **KMAP-C Toolkit** is a core C/C++ source code library to define and implement the input function, kinetic models, optimization algorithms, and utility functions. For parametric imaging (voxel-wise kinetic modeling), it adopts the OpenMP parallel programming model for acceleration. 
 
 <div align="center">
   <img src="https://github.com/user-attachments/assets/31573cb0-b1f5-4c50-8a51-8da9490eb214" width="1000" >
